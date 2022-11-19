@@ -53,7 +53,7 @@ function render(users) {
 	}
 
 	ctx.fillStyle = "#DDDDDD";
-    ctx.fillText("@sonnenbrandi@mieke.club mit lieben Grüßen an Duiker101", 700, 985, 290)
+    ctx.fillText("@sonnenbrandi@mieke.club mit lieben Grüßen an Duiker101", width-300, height-15, 290)
 };
 
 function get_layer(i) {
