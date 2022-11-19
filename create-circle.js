@@ -11,6 +11,8 @@ let requestCounter = 1;
 function circle_main() {
     // Make Button invisible to prevent clicking
     document.getElementById("btn_create").style.display = "none";
+    // Reset all global variables
+    [ownProfilePic, userInfo, connection_list, requestCounter] = [null, null, {}, 1];
     // Get handle from Textfield
     let mastodon_handle = document.getElementById("txt_mastodon_handle").value;
     userInfo = formatedUserHandle(mastodon_handle);
@@ -140,6 +142,7 @@ function showConnections() {
     );
     
     // Render the Objects
+    document.getElementById("btn_download").style.display = "inline";
     render(items);
 }
 
@@ -165,4 +168,18 @@ function httpRequest(url, callback, callbackVal=null)
     }
     xmlHttp.open("GET", url, true);
     xmlHttp.send(null);
+}
+
+function downloadImage() {
+    var canvas = document.getElementById("canvas");
+    // Convert the canvas to data
+    var image = canvas.toDataURL();
+    // Create a link
+    var aDownloadLink = document.createElement('a');
+    // Add the name of the file to the link
+    aDownloadLink.download = 'mastodon-circle.png';
+    // Attach the data to the link
+    aDownloadLink.href = image;
+    // Get the code to click the download link
+    aDownloadLink.click();
 }

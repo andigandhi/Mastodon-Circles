@@ -13,9 +13,8 @@ function render(users) {
 	const height = canvas.height;
 
 	// fill the background
-	ctx.fillStyle = "#C5EDCE";
+	ctx.fillStyle = "#282c37";
 	ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = "#000000";
 
     loadImage(ctx, ownProfilePic, (width/2)-110, (height/2)-110, 110, 110);
 
@@ -53,6 +52,7 @@ function render(users) {
 		}
 	}
 
+	ctx.fillStyle = "#DDDDDD";
     ctx.fillText("@sonnenbrandi@mieke.club mit lieben Grüßen an Duiker101", 700, 985, 290)
 };
 
