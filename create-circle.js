@@ -17,7 +17,6 @@ function circle_main() {
     let mastodon_handle = document.getElementById("txt_mastodon_handle").value;
     userInfo = formatedUserHandle(mastodon_handle);
     getStatuses();
-    //setTimeout(showConnections,3000);
 }
 
 // Format the Mastodon Handle to an array: [username, userID, instance.tld]
@@ -44,7 +43,7 @@ function getIdFromName(name, server) {
 // Get a JSON String with all the posted statuses from the account and call processStatuses()
 async function getStatuses() {
     // Build the URL
-    let url = "https://"+userInfo[2]+"/api/v1/accounts/"+userInfo[1]+"/statuses";
+    let url = "https://"+userInfo[2]+"/api/v1/accounts/"+userInfo[1]+"/statuses?exclude_replies=true";
     // Do the async http request and call processStatuses()
     httpRequest(url, processStatuses);
 }
@@ -53,10 +52,11 @@ async function getStatuses() {
 function processStatuses(statuses) {
     jsonStat = JSON.parse(statuses);
 
-    let request_limit = 30;
+    let request_limit = 50;
 
     for (var i=0; i<jsonStat.length; i++) {
         if (!jsonStat[i]["reblog"]) {
+            console.log(jsonStat[i]["content"]);
             evaluateStatus(jsonStat[i]["id"], (jsonStat[i]["favourites_count"]>0), (jsonStat[i]["reblogs_count"]>0));
             request_limit--;
             if (request_limit<0) break;
