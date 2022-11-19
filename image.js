@@ -28,6 +28,8 @@ function render(users) {
 
 		// loop over each circle of the layer
 		for (let i = 0; i < numb[layerIndex]; i++) {
+			// if we are trying to render a circle but we ran out of users, just exit the loop. We are done.
+			if (userNum>=users.length) break;
 			// We need an offset or the first circle will always on the same line and it looks weird
 			// Try removing this to see what happens
 			const offset = layerIndex * 30;
@@ -49,12 +51,12 @@ function render(users) {
 			);
 
             userNum++;
-			// if we are trying to render a circle but we ran out of users, just exit the loop. We are done.
-			if (userNum>=users.length) break;
 		}
 	}
 
 	ctx.fillStyle = "#DDDDDD";
+	ctx.fillText("MIEKE", 10, 15, 25)
+	ctx.fillText("KRÖGER", width-30, 15, 25)
     ctx.fillText("@sonnenbrandi@mieke.club mit lieben Grüßen an Duiker101", width-300, height-15, 290)
 };
 
