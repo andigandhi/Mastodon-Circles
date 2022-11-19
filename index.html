@@ -4,14 +4,16 @@
 <meta charset="UTF-8">
 <title>Mastodon Circle Creator</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="">
+<link rel="stylesheet" href="style.css">
 <style>
 </style>
 <script src=""></script>
 <body>
     <script src="create-circle.js"></script>
-    <input id="txt_mastodon_handle" type="text">
-    <button onClick="circle_main()">Circle Erstellen</button>
+    <h1>Mastodon Circle Creator (die unrunde Version)</h1>
+    <!-- Logo? -->
+    <input id="txt_mastodon_handle" type="text" placeholder="@sonnenbrandi@mieke.club" style="width: 300px;">
+    <button id="btn_create" onClick="circle_main()">Circle Erstellen</button>
     <br><br><br>
     <div id="outDiv"></div>
 </body>

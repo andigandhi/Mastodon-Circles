@@ -7,6 +7,8 @@ let connection_list = {};
 
 // The main function called by the button-click
 function circle_main() {
+    // Make Button invisible to prevent clicking
+    document.getElementById("btn_create").style.display = "none";
     // Get handle from Textfield
     let mastodon_handle = document.getElementById("txt_mastodon_handle").value;
     userInfo = formatedUserHandle(mastodon_handle);
@@ -46,30 +48,46 @@ function getStatuses() {
 function processStatuses(statuses) {
     jsonStat = JSON.parse(statuses);
 
-    let request_limit = Math.min(30, jsonStat.length);
+    let request_limit = 30;
 
-    console.log(request_limit)
-
-    for (var i=0; i<request_limit; i++) {
-        //if (jsonStat[i]["reblog"] != null) {
+    for (var i=0; i<jsonStat.length; i++) {
+        if (!jsonStat[i]["reblog"]) {
             evaluateStatus(jsonStat[i]["id"], (jsonStat[i]["favourites_count"]>0), (jsonStat[i]["reblogs_count"]>0));
-        //}
+            request_limit--;
+            if (request_limit<0) break;
+        }
     }
 }
 
+// Get all Reblogs and Favs for a status update
 function evaluateStatus(id, faved, rebloged) {
     // Build the URL
     let url1 = "https://"+userInfo[2]+"/api/v1/statuses/"+id+"/reblogged_by";
     // Do the async http request
-    if (rebloged) httpRequest(url1, addRepostConnections, 3);
+    if (rebloged) httpRequest(url1, evalStatusInteractions, 1.3);
 
     // Build the URL
-    let url2 = "https://"+userInfo[2]+"/api/v1/statuses/"+id+"/favourited_by";
+    let url2 = "https://"+userInfo[2]+"/api/v1/statuses/"+id+"/context";
     // Do the async http request
-    if (faved) httpRequest(url2, addRepostConnections, 1);
+    if (faved) httpRequest(url2, evalReplies, 1.1);
+
+    // Build the URL
+    let url3 = "https://"+userInfo[2]+"/api/v1/statuses/"+id+"/favourited_by";
+    // Do the async http request
+    if (faved) httpRequest(url3, evalStatusInteractions, 1.0);
 }
 
-function addRepostConnections(jsonString, plus) {
+// Evaluate the direct replies to tweets (no trees yet :( )
+function evalReplies(jsonString, plus) {
+    let jsonArray = JSON.parse(jsonString)["descendants"];
+
+    for (var i=0; i<jsonArray.length; i++) {
+        incConnectionValue(jsonArray[i]["account"], plus);
+    }
+}
+
+// Evaluate the Favs and Reposts
+function evalStatusInteractions(jsonString, plus) {
     let jsonArray = JSON.parse(jsonString);
     
     for (var i=0; i<jsonArray.length; i++) {
@@ -105,23 +123,27 @@ function addNewConnection(jsonArray) {
 
 
 function showConnections() {
+    // Remove own User from Dict
+    if (userInfo[1] in connection_list) delete connection_list[userInfo[1]];
+
+    // Sort dict into Array items
     var items = Object.keys(connection_list).map(
         (key) => { return [key, connection_list[key]] });
-
     items.sort(
         (first, second) => { return second[1]["conStrength"] - first[1]["conStrength"] }
     );
-
+    
+    // Render the Objects
     for (var i=0; i<items.length; i++) {
         //createUserObj(items[i][1])
         if (!items[i][1]["bot"]) createUserObj(items[i][1]);
     }
+    document.getElementById("btn_create").style.display = "inline";
 }
 
 function createUserObj(usr) {
-    console.log(usr)
     let usrElement = document.createElement("div");
-    usrElement.innerHTML = "<img src=\""+usr["pic"]+"\" width=\"20px\"><b>"+usr["name"]+"</b>\t"+usr["acct"];
+    usrElement.innerHTML = "<img src=\""+usr["pic"]+"\" width=\"20px\">\t\t<b>"+usr["name"]+"</b>\t"+usr["acct"];
     document.getElementById("outDiv").appendChild(usrElement);
 }
 
