@@ -6,6 +6,8 @@ const radius = [64,58,50];
 let userNum = 0;
 
 function render(users) {
+	userNum = 0;
+
 	const canvas = document.getElementById("canvas");
 	const ctx = canvas.getContext("2d");
     
@@ -16,7 +18,7 @@ function render(users) {
 	ctx.fillStyle = "#282c37";
 	ctx.fillRect(0, 0, width, height);
 
-    loadImage(ctx, ownProfilePic, (width/2)-110, (height/2)-110, 110, 110);
+	loadImage(ctx, ownProfilePic, (width/2)-110, (height/2)-110, 110, 110);
 
 	// loop over the layers
 	for (var layerIndex=0; layerIndex<3; layerIndex++) {

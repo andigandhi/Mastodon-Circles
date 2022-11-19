@@ -6,3 +6,13 @@ body {
     padding-top: 75px;
     text-align: center;
 }
+
+input[type="text"]
+{
+    font-size: 30px;
+    width: 50%;
+}
+
+button {
+    font-size: 30px;
+}

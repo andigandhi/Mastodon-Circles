@@ -56,7 +56,6 @@ function processStatuses(statuses) {
 
     for (var i=0; i<jsonStat.length; i++) {
         if (!jsonStat[i]["reblog"]) {
-            console.log(jsonStat[i]["content"]);
             evaluateStatus(jsonStat[i]["id"], (jsonStat[i]["favourites_count"]>0), (jsonStat[i]["reblogs_count"]>0));
             request_limit--;
             if (request_limit<0) break;
