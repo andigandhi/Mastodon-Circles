@@ -2,8 +2,10 @@
 Dies ist eine erste Implementierung, da ist noch vieeeel zu tun :)
 */
 
+let ownProfilePic;
 let userInfo;
 let connection_list = {};
+let requestCounter = 1;
 
 // The main function called by the button-click
 function circle_main() {
@@ -13,7 +15,7 @@ function circle_main() {
     let mastodon_handle = document.getElementById("txt_mastodon_handle").value;
     userInfo = formatedUserHandle(mastodon_handle);
     getStatuses();
-    setTimeout(showConnections,3000);
+    //setTimeout(showConnections,3000);
 }
 
 // Format the Mastodon Handle to an array: [username, userID, instance.tld]
@@ -28,16 +30,17 @@ function formatedUserHandle(mastodon_handle) {
 
 // Get the user ID from the handle
 function getIdFromName(name, server) {
-    // https://mieke.club/api/v1/accounts/lookup?acct=HeilandSanremo
     var xmlHttp = new XMLHttpRequest();
     let url = "https://"+server+"/api/v1/accounts/lookup?acct="+name;
     xmlHttp.open( "GET", url, false ); // false for synchronous request
     xmlHttp.send( null );
-    return JSON.parse(xmlHttp.responseText)["id"];
+    let response = JSON.parse(xmlHttp.responseText);
+    ownProfilePic = response["avatar"];
+    return response["id"];
 }
 
 // Get a JSON String with all the posted statuses from the account and call processStatuses()
-function getStatuses() {
+async function getStatuses() {
     // Build the URL
     let url = "https://"+userInfo[2]+"/api/v1/accounts/"+userInfo[1]+"/statuses";
     // Do the async http request and call processStatuses()
@@ -61,6 +64,7 @@ function processStatuses(statuses) {
 
 // Get all Reblogs and Favs for a status update
 function evaluateStatus(id, faved, rebloged) {
+    requestCounter += faved+rebloged+1;
     // Build the URL
     let url1 = "https://"+userInfo[2]+"/api/v1/statuses/"+id+"/reblogged_by";
     // Do the async http request
@@ -69,7 +73,7 @@ function evaluateStatus(id, faved, rebloged) {
     // Build the URL
     let url2 = "https://"+userInfo[2]+"/api/v1/statuses/"+id+"/context";
     // Do the async http request
-    if (faved) httpRequest(url2, evalReplies, 1.1);
+    httpRequest(url2, evalReplies, 1.1);
 
     // Build the URL
     let url3 = "https://"+userInfo[2]+"/api/v1/statuses/"+id+"/favourited_by";
@@ -84,6 +88,8 @@ function evalReplies(jsonString, plus) {
     for (var i=0; i<jsonArray.length; i++) {
         incConnectionValue(jsonArray[i]["account"], plus);
     }
+
+    if (requestCounter<=0) showConnections();
 }
 
 // Evaluate the Favs and Reposts
@@ -93,6 +99,8 @@ function evalStatusInteractions(jsonString, plus) {
     for (var i=0; i<jsonArray.length; i++) {
         incConnectionValue(jsonArray[i], plus);
     }
+
+    if (requestCounter<=0) showConnections();
 }
 
 
@@ -106,8 +114,6 @@ function incConnectionValue(conJSON, plus) {
     }
     // Increment the connection strength
     connection_list[id]["conStrength"] = connection_list[id]["conStrength"] + plus;
-
-    //document.getElementById("outDiv").innerText = JSON.stringify(connection_list);
 }
 
 // Create a new node in the connection_list dictionary
@@ -134,16 +140,12 @@ function showConnections() {
     );
     
     // Render the Objects
-    for (var i=0; i<items.length; i++) {
-        //createUserObj(items[i][1])
-        if (!items[i][1]["bot"]) createUserObj(items[i][1]);
-    }
-    document.getElementById("btn_create").style.display = "inline";
+    render(items);
 }
 
 function createUserObj(usr) {
     let usrElement = document.createElement("div");
-    usrElement.innerHTML = "<img src=\""+usr["pic"]+"\" width=\"20px\">\t\t<b>"+usr["name"]+"</b>\t"+usr["acct"];
+    usrElement.innerHTML = "<img src=\""+usr["pic"]+"\" width=\"20px\">&nbsp;&nbsp;&nbsp;<b>"+usr["name"]+"</b>&nbsp;&nbsp;"+usr["acct"];
     document.getElementById("outDiv").appendChild(usrElement);
 }
 
@@ -153,10 +155,13 @@ function httpRequest(url, callback, callbackVal=null)
 {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            callback(xmlHttp.responseText, callbackVal);
-        } else if (xmlHttp.readyState == 4 && xmlHttp.status == 404)
-            callback("[]", callbackVal);
+        if (xmlHttp.readyState == 4) {
+            requestCounter--;
+            if (xmlHttp.status == 200) {
+                callback(xmlHttp.responseText, callbackVal);
+            } else
+                callback("[]", callbackVal);
+        }
     }
     xmlHttp.open("GET", url, true);
     xmlHttp.send(null);
