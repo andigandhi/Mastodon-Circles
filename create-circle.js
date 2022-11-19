@@ -172,14 +172,5 @@ function httpRequest(url, callback, callbackVal=null)
 
 function downloadImage() {
     var canvas = document.getElementById("canvas");
-    // Convert the canvas to data
-    var image = canvas.toDataURL();
-    // Create a link
-    var aDownloadLink = document.createElement('a');
-    // Add the name of the file to the link
-    aDownloadLink.download = 'mastodon-circle.png';
-    // Attach the data to the link
-    aDownloadLink.href = image;
-    // Get the code to click the download link
-    aDownloadLink.click();
+    window.open(canvas.toDataURL('image/png'));
 }
