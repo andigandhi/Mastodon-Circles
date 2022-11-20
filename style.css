@@ -9,10 +9,19 @@ body {
 
 input[type="text"]
 {
-    font-size: 30px;
-    width: 50%;
+    font-size: 110%;
+    width: 75%;
 }
 
 button {
-    font-size: 30px;
+    font-size: 110%;
+}
+
+a {
+    text-decoration: none;
+    color: #AAAAAA;
+}
+
+#outDiv {
+    font-size: 20%;
 }

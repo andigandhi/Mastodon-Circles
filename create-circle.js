@@ -6,16 +6,19 @@ let ownProfilePic;
 let userInfo;
 let connection_list = {};
 let requestCounter = 1;
+// Request Limit
+let request_limit;
 
 // The main function called by the button-click
 function circle_main() {
     // Make Button invisible to prevent clicking
     document.getElementById("btn_create").style.display = "none";
     // Reset all global variables
-    [ownProfilePic, userInfo, connection_list, requestCounter] = [null, null, {}, 1];
+    [ownProfilePic, userInfo, connection_list, requestCounter, request_limit] = [null, null, {}, 1, 50];
     // Get handle from Textfield
     let mastodon_handle = document.getElementById("txt_mastodon_handle").value;
     userInfo = formatedUserHandle(mastodon_handle);
+    // Do all the Magic for creating circle
     getStatuses();
 }
 
@@ -23,17 +26,17 @@ function circle_main() {
 function formatedUserHandle(mastodon_handle) {
     // Remove leading @
     if (mastodon_handle.charAt(0) === '@') mastodon_handle = mastodon_handle.substr(1);
-    // Split handle into name and 
+    // Split handle into name and instance
     mastodon_handle = mastodon_handle.split("@");
-    // Return the array
+    // Return the array (fetch user ID with getIdFromName)
     return [mastodon_handle[0], getIdFromName(mastodon_handle[0], mastodon_handle[1]), mastodon_handle[1]];
 }
 
-// Get the user ID from the handle
+// Get the user ID from the handle (synchronous request! :( )
 function getIdFromName(name, server) {
     var xmlHttp = new XMLHttpRequest();
     let url = "https://"+server+"/api/v1/accounts/lookup?acct="+name;
-    xmlHttp.open( "GET", url, false ); // false for synchronous request
+    xmlHttp.open( "GET", url, false );
     xmlHttp.send( null );
     let response = JSON.parse(xmlHttp.responseText);
     ownProfilePic = response["avatar"];
@@ -43,7 +46,7 @@ function getIdFromName(name, server) {
 // Get a JSON String with all the posted statuses from the account and call processStatuses()
 async function getStatuses() {
     // Build the URL
-    let url = "https://"+userInfo[2]+"/api/v1/accounts/"+userInfo[1]+"/statuses?exclude_replies=true";
+    let url = "https://"+userInfo[2]+"/api/v1/accounts/"+userInfo[1]+"/statuses?exclude_replies=true&exclude_reblogs=true";
     // Do the async http request and call processStatuses()
     httpRequest(url, processStatuses);
 }
@@ -52,15 +55,13 @@ async function getStatuses() {
 function processStatuses(statuses) {
     jsonStat = JSON.parse(statuses);
 
-    let request_limit = 50;
-
     for (var i=0; i<jsonStat.length; i++) {
-        if (!jsonStat[i]["reblog"]) {
-            evaluateStatus(jsonStat[i]["id"], (jsonStat[i]["favourites_count"]>0), (jsonStat[i]["reblogs_count"]>0));
-            request_limit--;
-            if (request_limit<0) break;
-        }
+        evaluateStatus(jsonStat[i]["id"], (jsonStat[i]["favourites_count"]>0), (jsonStat[i]["reblogs_count"]>0));
+        request_limit--;
+        if (request_limit<0) return;
     }
+
+    // Do another API request to fetch older Posts?
 }
 
 // Get all Reblogs and Favs for a status update
@@ -140,6 +141,13 @@ function showConnections() {
         (first, second) => { return second[1]["conStrength"] - first[1]["conStrength"] }
     );
     
+    // Export Item List for Further usage
+    let userDataExport = {};
+    for (var i=0; i<items.length; i++) {
+        userDataExport[items[i][0]] = items[i][1]["conStrength"].toFixed(1);
+    }
+    document.getElementById("outDiv").innerText = JSON.stringify(userDataExport);
+
     // Render the Objects
     document.getElementById("btn_download").style.display = "inline";
     render(items);

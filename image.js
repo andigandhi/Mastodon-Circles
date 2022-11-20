@@ -15,8 +15,8 @@ function render(users) {
 	const height = canvas.height;
 
 	// fill the background
-	ctx.fillStyle = "#282c37";
-	ctx.fillRect(0, 0, width, height);
+	const bg_image = document.getElementById("mieke_bg");
+	ctx.drawImage(bg_image, 0, 0, 1000, 1000);
 
 	loadImage(ctx, ownProfilePic, (width/2)-110, (height/2)-110, 110, 110);
 
@@ -54,10 +54,12 @@ function render(users) {
 		}
 	}
 
-	ctx.fillStyle = "#DDDDDD";
-	ctx.fillText("MIEKE", 10, 15, 25)
-	ctx.fillText("KRÖGER", width-30, 15, 25)
-    ctx.fillText("@sonnenbrandi@mieke.club mit lieben Grüßen an Duiker101", width-300, height-15, 290)
+	ctx.fillStyle = "#0505AA";
+	ctx.fillText("MIEKE", 10, 15, 40)
+	ctx.fillText("KRÖGER", width-50, 15, 40)
+	ctx.fillStyle = "#666666";
+	ctx.fillText("circle.grasserisen.de", width-120, height-15, 110)
+    //ctx.fillText("@sonnenbrandi@mieke.club mit lieben Grüßen an Duiker101", width-300, height-15, 290)
 };
 
 function get_layer(i) {
