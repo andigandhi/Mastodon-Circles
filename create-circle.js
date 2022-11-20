@@ -46,9 +46,10 @@ function getIdFromName(name, server) {
 }
 
 // Get a JSON String with all the posted statuses from the account and call processStatuses()
-async function getStatuses() {
+async function getStatuses(startID=null) {
     // Build the URL
-    let url = "https://"+userInfo[2]+"/api/v1/accounts/"+userInfo[1]+"/statuses?exclude_replies=true&exclude_reblogs=true";
+    let url = "https://"+userInfo[2]+"/api/v1/accounts/"+userInfo[1]+"/statuses?exclude_replies=true&exclude_reblogs=true&limit=40";
+    //if (startID) url = url+"&max_id="+startID
     // Do the async http request and call processStatuses()
     httpRequest(url, processStatuses);
 }

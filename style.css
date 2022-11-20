@@ -43,5 +43,5 @@ a {
 
 .userSubDiv {
     min-width: 400px;
-    padding: 20px;
+    max-width: 90%;
 }
