@@ -26,6 +26,8 @@ function circle_main() {
 function formatedUserHandle(mastodon_handle) {
     // Remove leading @
     if (mastodon_handle.charAt(0) === '@') mastodon_handle = mastodon_handle.substr(1);
+    // Remove Spaces
+    mastodon_handle = mastodon_handle.replaceAll(" ","");
     // Split handle into name and instance
     mastodon_handle = mastodon_handle.split("@");
     // Return the array (fetch user ID with getIdFromName)
@@ -141,12 +143,24 @@ function showConnections() {
         (first, second) => { return second[1]["conStrength"] - first[1]["conStrength"] }
     );
     
-    // Export Item List for Further usage
+    // Also export the Username List
     let userDataExport = {};
+    let usersDivs = [document.getElementById("ud1"), document.getElementById("ud2"), document.getElementById("ud3")];
     for (var i=0; i<items.length; i++) {
-        userDataExport[items[i][0]] = items[i][1]["conStrength"].toFixed(1);
+        // Create a new html Element
+        let newUser = document.createElement("p");
+        newUser.innerText = items[i][1]["acct"];
+        
+        // Determine the column for the data
+        let udNum = 0;
+        if (i > numb[0]) udNum = 1;
+        if (i > numb[0]+numb[1]) udNum = 2;
+        usersDivs[udNum].appendChild(newUser);
+
+        // Belongs to the hidden Export - Maybe for further Projects
+        // userDataExport[items[i][0]] = items[i][1]["conStrength"].toFixed(1);
     }
-    document.getElementById("outDiv").innerText = JSON.stringify(userDataExport);
+    //document.getElementById("outDiv").innerText = JSON.stringify(userDataExport);
 
     // Render the Objects
     document.getElementById("btn_download").style.display = "inline";
@@ -177,7 +191,9 @@ function httpRequest(url, callback, callbackVal=null)
     xmlHttp.send(null);
 }
 
-function downloadImage() {
-    var canvas = document.getElementById("canvas");
-    window.open(canvas.toDataURL('image/png'));
-}
+function downloadImage(){
+    var link = document.createElement('a');
+    link.download = 'mastodon-circle.png';
+    link.href = document.getElementById('canvas').toDataURL()
+    link.click();
+  }

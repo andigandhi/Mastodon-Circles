@@ -17,6 +17,11 @@ button {
     font-size: 110%;
 }
 
+canvas {
+    max-width: 1000px;
+    width: 90%;
+}
+
 a {
     text-decoration: none;
     color: #AAAAAA;
@@ -24,4 +29,15 @@ a {
 
 #outDiv {
     font-size: 20%;
+}
+
+#usersDiv {
+    margin-top: 30px;
+    line-height: 100%;
+}
+
+.userSubDiv {
+    width: 30%;
+    float: left;
+    padding: 20px;
 }
