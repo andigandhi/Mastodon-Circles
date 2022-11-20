@@ -146,6 +146,9 @@ function showConnections() {
     // Also export the Username List
     let userDataExport = {};
     let usersDivs = [document.getElementById("ud1"), document.getElementById("ud2"), document.getElementById("ud3")];
+    // Clear all content of divs
+    for (var i=0; i<3; i++) usersDivs[i].innerHTML="";
+    
     for (var i=0; i<items.length; i++) {
         // Create a new html Element
         let newUser = document.createElement("p");

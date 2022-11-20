@@ -34,10 +34,14 @@ a {
 #usersDiv {
     margin-top: 30px;
     line-height: 100%;
+    font-size: 100%;
+}
+
+#credits {
+    min-width: 90%;
 }
 
 .userSubDiv {
-    width: 30%;
-    float: left;
+    min-width: 400px;
     padding: 20px;
 }
