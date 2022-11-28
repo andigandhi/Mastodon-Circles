@@ -91,7 +91,7 @@ function loadImage(ctx, url, x, y, r) {
 
 		remainingImg -= 1;
 		if (remainingImg <= 0) {
-			document.getElementById("btn_download").href = document.getElementById("canvas").toDataURL("image/png;base64")
+			document.getElementById("btn_download").href = document.getElementById("canvas").toDataURL("image/png");
     		document.getElementById("btn_download").style.display = "inline";
 		}
     };
