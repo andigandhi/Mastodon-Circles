@@ -4,9 +4,11 @@ const dist = [200, 330, 450];
 const numb = [8, 15, 26];
 const radius = [64,58,50];
 let userNum = 0;
+let remainingImg = 1;
 
 function render(users) {
 	userNum = 0;
+	remainingImg = 1;
 
 	const canvas = document.getElementById("canvas");
 	const ctx = canvas.getContext("2d");
@@ -28,6 +30,7 @@ function render(users) {
 
 		// loop over each circle of the layer
 		for (let i = 0; i < numb[layerIndex]; i++) {
+			remainingImg += 1;
 			// if we are trying to render a circle but we ran out of users, just exit the loop. We are done.
 			if (userNum>=users.length) break;
 			// We need an offset or the first circle will always on the same line and it looks weird
@@ -85,6 +88,13 @@ function loadImage(ctx, url, x, y, r) {
         ctx.clip();
         ctx.closePath();
         ctx.restore();
+
+		remainingImg -= 1;
+		console.log(remainingImg);
+		if (remainingImg == 0) {
+			document.getElementById("btn_download").href = document.getElementById("canvas").toDataURL("image/png;base64")
+    		document.getElementById("btn_download").style.display = "inline";
+		}
     };
     img.src = url;
 }

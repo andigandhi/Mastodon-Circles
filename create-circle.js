@@ -166,8 +166,6 @@ function showConnections() {
     }
     //document.getElementById("outDiv").innerText = JSON.stringify(userDataExport);
 
-    // Render the Objects
-    document.getElementById("btn_download").style.display = "inline";
     render(items);
 }
 
@@ -194,19 +192,3 @@ function httpRequest(url, callback, callbackVal=null)
     xmlHttp.open("GET", url, true);
     xmlHttp.send(null);
 }
-
-function downloadImage(){
-    var lnk = document.createElement('a'), e;
-    lnk.download = 'mastodon-circle.png';
-    lnk.href = document.getElementById("canvas").toDataURL("image/png;base64");
-
-    if (document.createEvent) {
-        e = document.createEvent("MouseEvents");
-        e.initMouseEvent("click", true, true, window,
-                        0, 0, 0, 0, 0, false, false, false,
-                        false, 0, null);
-        lnk.dispatchEvent(e);
-    } else if (lnk.fireEvent) {
-        lnk.fireEvent("onclick");
-    }
-  }
