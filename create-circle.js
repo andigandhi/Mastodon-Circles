@@ -198,7 +198,7 @@ function httpRequest(url, callback, callbackVal=null)
 function downloadImage(){
     var lnk = document.createElement('a'), e;
     lnk.download = 'mastodon-circle.png';
-    lnk.href = canvas.toDataURL("image/png;base64");
+    lnk.href = document.getElementById("canvas").toDataURL("image/png;base64");
 
     if (document.createEvent) {
         e = document.createEvent("MouseEvents");
