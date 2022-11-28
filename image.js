@@ -4,11 +4,11 @@ const dist = [200, 330, 450];
 const numb = [8, 15, 26];
 const radius = [64,58,50];
 let userNum = 0;
-let remainingImg = 1;
+let remainingImg = 0;
 
 function render(users) {
 	userNum = 0;
-	remainingImg = 1;
+	remainingImg = 0;
 
 	const canvas = document.getElementById("canvas");
 	const ctx = canvas.getContext("2d");
@@ -90,8 +90,7 @@ function loadImage(ctx, url, x, y, r) {
         ctx.restore();
 
 		remainingImg -= 1;
-		console.log(remainingImg);
-		if (remainingImg == 0) {
+		if (remainingImg <= 0) {
 			document.getElementById("btn_download").href = document.getElementById("canvas").toDataURL("image/png;base64")
     		document.getElementById("btn_download").style.display = "inline";
 		}
